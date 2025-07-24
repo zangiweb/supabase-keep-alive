@@ -1,9 +1,12 @@
+
+```yaml
 name: Supabase Keep-Alive
 
 on:
   schedule:
     # Esegui ogni 6 giorni alle 09:00 UTC (11:00 CEST)
     - cron: '0 9 */6 * *'
+  workflow_dispatch:
 
 jobs:
   ping:
