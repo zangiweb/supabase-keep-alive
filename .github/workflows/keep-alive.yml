@@ -1,0 +1,30 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # Esegui ogni 6 giorni alle 09:00 UTC (11:00 CEST)
+    - cron: '0 9 */6 * *'
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Installare client Supabase
+        run: npm install @supabase/supabase-js
+
+      - name: Eseguire ping al database
+        run: |
+          node -e "
+            const { createClient } = require('@supabase/supabase-js');
+            const url = process.env.SUPABASE_URL;
+            const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            const supabase = createClient(url, key);
+            (async () => {
+              const { error } = await supabase.rpc('version');
+              if (error) throw error;
+              console.log('✅ Ping OK');
+            })();
+          "
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
